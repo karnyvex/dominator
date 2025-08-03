@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - EVE Online Market Dominator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        h1 {
+            color: #ff4757;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            background: rgba(255, 71, 87, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ff4757;
+        }
+        .back-button {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚠️ Analysis Error</h1>
+
+        <div class="error-message">
+            <p th:text="${error}">An error occurred during market analysis.</p>
+        </div>
+
+        <p>Please check your configuration and try again. Make sure the EVE ESI API is accessible.</p>
+
+        <a href="/" class="back-button">← Back to Home</a>
+    </div>
+</body>
+</html>
+

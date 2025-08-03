@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Analysis Results - EVE Online Market Dominator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+        .analysis-info {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .results-table th {
+            background: rgba(0, 212, 255, 0.3);
+            padding: 15px;
+            text-align: left;
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .results-table tr:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .profit-positive {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .profit-high {
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+        .back-button {
+            background: linear-gradient(45deg, #666, #888);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-button:hover {
+            background: linear-gradient(45deg, #888, #aaa);
+        }
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: #ccc;
+        }
+        .number {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-button">← Back to Analysis</a>
+
+        <h1>📊 Market Domination Opportunities</h1>
+
+        <div class="analysis-info">
+            <p><strong>Region:</strong> <span th:text="${regionName}"></span></p>
+            <p><strong>Analysis Time:</strong> <span th:text="${#temporals.format(analysisTime, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+        </div>
+
+        <div th:if="${results != null and !results.empty}">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Orders to Clear</th>
+                        <th>Items to Buy</th>
+                        <th>Investment (ISK)</th>
+                        <th>Target Sell Price</th>
+                        <th>Profit per Item</th>
+                        <th>Total Profit</th>
+                        <th>ROI %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="result : ${results}">
+                        <td th:text="${result.itemName}"></td>
+                        <td class="number" th:text="${#numbers.formatInteger(result.ordersToBeCleared, 0, 'COMMA')}"></td>
+                        <td class="number" th:text="${#numbers.formatInteger(result.totalItemsToBuy, 0, 'COMMA')}"></td>
+                        <td class="number" th:text="${#numbers.formatDecimal(result.totalInvestment, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
+                        <td class="number" th:text="${#numbers.formatDecimal(result.targetSellPrice, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
+                        <td class="number profit-positive" th:text="${#numbers.formatDecimal(result.profitPerItem, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
+                        <td class="number profit-positive" th:text="${#numbers.formatDecimal(result.totalProfit, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
+                        <td class="number"
+                            th:classappend="${result.roiPercentage > 50 ? 'profit-high' : 'profit-positive'}"
+                            th:text="${#numbers.formatDecimal(result.roiPercentage, 1, 2)} + '%'"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${results == null or results.empty}" class="no-results">
+            <h3>🤷‍♂️ No Profitable Opportunities Found</h3>
+            <p>Either the market conditions don't meet your profit requirements, or the investment needed exceeds your maximum budget.</p>
+            <p>Try adjusting your configuration in the application.properties file.</p>
+        </div>
+    </div>
+</body>
+</html>

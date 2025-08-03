@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVE Online Market Dominator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 30px;
+        }
+        .config-info {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00d4ff;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        button {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 EVE Online Market Dominator</h1>
+
+        <div class="config-info">
+            <h3>Current Configuration</h3>
+            <p><strong>Maximum Investment:</strong> <span th:text="${maxInvestment}"></span> million ISK</p>
+            <p><strong>Target ROI:</strong> <span th:text="${roiPercentage}"></span>%</p>
+            <p><strong>Tax Rate:</strong> <span th:text="${taxPercentage}"></span>%</p>
+        </div>
+
+        <form action="/analyze" method="post">
+            <div class="form-group">
+                <label for="regionId">Select Region to Analyze:</label>
+                <select name="regionId" id="regionId" required>
+                    <option value="">Choose a region...</option>
+                    <option th:each="region : ${regions}"
+                            th:value="${region}"
+                            th:text="${region == 10000002 ? 'The Forge (Jita)' : 'Region ' + region}">
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit">🎯 Initiate Market Analysis</button>
+        </form>
+    </div>
+</body>
+</html>
