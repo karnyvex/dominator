@@ -44,6 +44,26 @@
             text-align: left;
             color: #00d4ff;
             font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background-color 0.2s ease;
+        }
+        .results-table th:hover {
+            background: rgba(0, 212, 255, 0.4);
+        }
+        .results-table th.sortable::after {
+            content: ' ⇅';
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .results-table th.sort-asc::after {
+            content: ' ▲';
+            color: #00d4ff;
+        }
+        .results-table th.sort-desc::after {
+            content: ' ▼';
+            color: #00d4ff;
         }
         .results-table td {
             padding: 12px 15px;
@@ -82,6 +102,12 @@
         .number {
             text-align: right;
         }
+        .sort-info {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #999;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -96,17 +122,21 @@
         </div>
 
         <div th:if="${results != null and !results.empty}">
-            <table class="results-table">
+            <div class="sort-info">
+                💡 Click on column headers to sort the data
+            </div>
+
+            <table class="results-table" id="resultsTable">
                 <thead>
                     <tr>
-                        <th>Item Name</th>
-                        <th>Orders to Clear</th>
-                        <th>Items to Buy</th>
-                        <th>Investment (ISK)</th>
-                        <th>Target Sell Price</th>
-                        <th>Profit per Item</th>
-                        <th>Total Profit</th>
-                        <th>ROI %</th>
+                        <th class="sortable" data-column="itemName" data-type="string">Item Name</th>
+                        <th class="sortable" data-column="ordersToBeCleared" data-type="number">Orders to Clear</th>
+                        <th class="sortable" data-column="totalItemsToBuy" data-type="number">Items to Buy</th>
+                        <th class="sortable" data-column="totalInvestment" data-type="number">Investment (ISK)</th>
+                        <th class="sortable" data-column="targetSellPrice" data-type="number">Target Sell Price</th>
+                        <th class="sortable" data-column="profitPerItem" data-type="number">Profit per Item</th>
+                        <th class="sortable" data-column="totalProfit" data-type="number">Total Profit</th>
+                        <th class="sortable sort-desc" data-column="roiPercentage" data-type="number">ROI %</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -132,5 +162,83 @@
             <p>Try adjusting your configuration in the application.properties file.</p>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('resultsTable');
+            const headers = table.querySelectorAll('th.sortable');
+
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const column = this.getAttribute('data-column');
+                    const type = this.getAttribute('data-type');
+                    const currentSort = this.classList.contains('sort-asc') ? 'asc' :
+                                      this.classList.contains('sort-desc') ? 'desc' : 'none';
+
+                    // Remove sort classes from all headers
+                    headers.forEach(h => {
+                        h.classList.remove('sort-asc', 'sort-desc');
+                    });
+
+                    // Determine new sort direction
+                    let newSort;
+                    if (currentSort === 'none' || currentSort === 'desc') {
+                        newSort = 'asc';
+                        this.classList.add('sort-asc');
+                    } else {
+                        newSort = 'desc';
+                        this.classList.add('sort-desc');
+                    }
+
+                    // Sort the table
+                    sortTable(table, column, type, newSort);
+                });
+            });
+
+            function sortTable(table, column, type, direction) {
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+
+                const columnIndex = getColumnIndex(table, column);
+
+                rows.sort((a, b) => {
+                    let aVal = a.cells[columnIndex].textContent.trim();
+                    let bVal = b.cells[columnIndex].textContent.trim();
+
+                    if (type === 'number') {
+                        // Remove formatting for numbers (commas, currency symbols, etc.)
+                        aVal = parseFloat(aVal.replace(/[^\d.-]/g, '')) || 0;
+                        bVal = parseFloat(bVal.replace(/[^\d.-]/g, '')) || 0;
+
+                        return direction === 'asc' ? aVal - bVal : bVal - aVal;
+                    } else {
+                        // String comparison
+                        aVal = aVal.toLowerCase();
+                        bVal = bVal.toLowerCase();
+
+                        if (direction === 'asc') {
+                            return aVal.localeCompare(bVal);
+                        } else {
+                            return bVal.localeCompare(aVal);
+                        }
+                    }
+                });
+
+                // Clear tbody and append sorted rows
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            function getColumnIndex(table, columnDataAttribute) {
+                const headers = table.querySelectorAll('th');
+                for (let i = 0; i < headers.length; i++) {
+                    if (headers[i].getAttribute('data-column') === columnDataAttribute) {
+                        return i;
+                    }
+                }
+                return 0;
+            }
+        });
+    </script>
 </body>
 </html>
