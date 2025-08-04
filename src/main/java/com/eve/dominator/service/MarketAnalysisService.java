@@ -68,9 +68,9 @@ public class MarketAnalysisService {
     }
 
     private MarketAnalysisResult calculateDominationOpportunity(int typeId, List<MarketOrder> orders) {
-        double maxInvestment = eveConfig.getInvestment().getMaxMillions() * 1_000_000;
-        double requiredRoi = eveConfig.getProfit().getRoiPercentage();
-        double taxRate = eveConfig.getProfit().getTaxPercentage() / 100.0;
+        double maxInvestment = eveConfig.getMonopoly().getMaxInvestmentMillions() * 1_000_000;
+        double requiredRoi = eveConfig.getMonopoly().getTargetRoiPercentage();
+        double taxRate = eveConfig.getMonopoly().getTaxPercentage() / 100.0;
 
         double totalCost = 0;
         int totalItems = 0;

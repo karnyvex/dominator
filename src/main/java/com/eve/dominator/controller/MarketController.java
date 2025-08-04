@@ -35,14 +35,29 @@ public class MarketController {
     @GetMapping("/")
     public String index(Model model) {
         logger.info("Index page requested");
+
+        return "index";
+    }
+
+    @GetMapping("/monopoly")
+    public String monopolyPage(Model model) {
+        logger.info("Monopoly scan page requested");
         logger.info("Regions: {}", eveConfig.getRegions());
-        logger.info("Max Investment: {}", eveConfig.getInvestment().getMaxMillions());
 
         model.addAttribute("regions", eveConfig.getRegions());
+        model.addAttribute("maxInvestment", eveConfig.getMonopoly().getMaxInvestmentMillions());
+        model.addAttribute("roiPercentage", eveConfig.getMonopoly().getTargetRoiPercentage());
+        model.addAttribute("taxPercentage", eveConfig.getMonopoly().getTaxPercentage());
+
+        return "monopoly";
+    }
+
+    @GetMapping("/market-data")
+    public String marketDataPage(Model model) {
+        logger.info("Market data page requested");
+        logger.info("Import Regions: {}", eveConfig.getImportRegions());
+
         model.addAttribute("importRegions", eveConfig.getImportRegions());
-        model.addAttribute("maxInvestment", eveConfig.getInvestment().getMaxMillions());
-        model.addAttribute("roiPercentage", eveConfig.getProfit().getRoiPercentage());
-        model.addAttribute("taxPercentage", eveConfig.getProfit().getTaxPercentage());
 
         // Add statistics count for each import region
         for (Long regionId : eveConfig.getImportRegions()) {
@@ -50,12 +65,12 @@ public class MarketController {
             model.addAttribute("statsCount_" + regionId, count);
         }
 
-        return "index";
+        return "market-data";
     }
 
     @PostMapping("/analyze")
     public String analyzeMarket(@RequestParam Long regionId, Model model) {
-        logger.info("Market analysis requested for region: {}", regionId);
+        logger.info("Monopoly scan requested for region: {}", regionId);
 
         try {
             List<MarketAnalysisResult> results = marketAnalysisService.analyzeMarkets(regionId).block();
@@ -83,11 +98,7 @@ public class MarketController {
             logger.info("Mokaam import completed: {}", result);
 
             model.addAttribute("message", result);
-            model.addAttribute("regions", eveConfig.getRegions());
             model.addAttribute("importRegions", eveConfig.getImportRegions());
-            model.addAttribute("maxInvestment", eveConfig.getInvestment().getMaxMillions());
-            model.addAttribute("roiPercentage", eveConfig.getProfit().getRoiPercentage());
-            model.addAttribute("taxPercentage", eveConfig.getProfit().getTaxPercentage());
 
             // Refresh statistics count for import regions
             for (Long regId : eveConfig.getImportRegions()) {
@@ -95,7 +106,7 @@ public class MarketController {
                 model.addAttribute("statsCount_" + regId, count);
             }
 
-            return "index";
+            return "market-data";
         } catch (Exception e) {
             logger.error("Failed to import Mokaam data for region {}: ", regionId, e);
             model.addAttribute("error", "Failed to import Mokaam data: " + e.getMessage());

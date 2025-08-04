@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Data Manager - EVE Market Dominator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 2.2em;
+        }
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #00d4ff;
+        }
+        .message.success {
+            background-color: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            border-left-color: #00ff00;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+        }
+        button {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+        .data-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+        .section-title .icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .description {
+            color: #ccc;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .region-data {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00d4ff;
+        }
+        .region-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .region-name {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+        .data-count {
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        .import-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 165, 0, 0.3);
+        }
+        .warning {
+            background: rgba(255, 165, 0, 0.1);
+            color: #ffa500;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffa500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Market Data Manager</h1>
+            <a href="/" class="back-button">← Back to Main</a>
+        </div>
+
+        <!-- Success/Info Messages -->
+        <div th:if="${message}" class="message success">
+            <p th:text="${message}"></p>
+        </div>
+
+        <!-- Current Data Status -->
+        <div class="data-section">
+            <h3 class="section-title">
+                <span class="icon">📊</span>
+                Current Data Status
+            </h3>
+            <p class="description">
+                Overview of historical market data currently stored in the system.
+                This data is used to improve analysis accuracy and filter out low-volume items.
+            </p>
+
+            <div th:each="region : ${importRegions}" class="region-data">
+                <div class="region-info">
+                    <span class="region-name" th:text="${region == 10000002 ? 'The Forge (Jita)' :
+                                     (region == 10000043 ? 'Domain (Amarr)' :
+                                      (region == 10000032 ? 'Sinq Laison (Dodixie)' :
+                                       (region == 10000030 ? 'Heimatar (Rens)' :
+                                        (region == 10000042 ? 'Metropolis' : 'Region ' + region))))}"></span>
+                    <span class="data-count" th:text="'(' + ${#vars.getVariable('statsCount_' + region)} + ' market records)'"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Section -->
+        <div class="import-section">
+            <h3 class="section-title">
+                <span class="icon">🔄</span>
+                Import Historical Data
+            </h3>
+            <p class="description">
+                Import comprehensive historical market data from Mokaam.dk. This includes pricing trends,
+                volume statistics, and volatility metrics across multiple timeframes.
+            </p>
+
+            <div class="warning">
+                <strong>⚠️ Warning:</strong> Importing data will replace all existing historical data for the selected region.
+                This process may take several minutes for regions with extensive market activity.
+            </div>
+
+            <form action="/import-mokaam" method="post">
+                <div class="form-group">
+                    <label for="importRegionId">Select Region to Import Data:</label>
+                    <select name="regionId" id="importRegionId" required>
+                        <option value="">Choose a region...</option>
+                        <option th:each="region : ${importRegions}"
+                                th:value="${region}"
+                                th:text="${region == 10000002 ? 'The Forge (Jita)' :
+                                         (region == 10000043 ? 'Domain (Amarr)' :
+                                          (region == 10000032 ? 'Sinq Laison (Dodixie)' :
+                                           (region == 10000030 ? 'Heimatar (Rens)' :
+                                            (region == 10000042 ? 'Metropolis' : 'Region ' + region))))}">
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit"
+                        onclick="return confirm('This will delete all existing historical data for the selected region and import fresh data. This process may take several minutes. Continue?')">
+                    🔄 Import Historical Data
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
