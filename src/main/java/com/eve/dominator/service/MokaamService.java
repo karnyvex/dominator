@@ -392,4 +392,8 @@ public class MokaamService {
     public long getStatisticsCountForTypeId(Integer typeId) {
         return statisticsRepository.countByTypeId(typeId);
     }
+
+    public java.time.LocalDate getLastRefreshDate(Long regionId) {
+        return statisticsRepository.findLatestDateByRegionId(regionId).orElse(null);
+    }
 }

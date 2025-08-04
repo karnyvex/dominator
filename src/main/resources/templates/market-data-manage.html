@@ -146,6 +146,44 @@
             margin-bottom: 20px;
             border-left: 4px solid #ffa500;
         }
+        .data-status {
+            margin-bottom: 30px;
+        }
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+        }
+        .region-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .data-info {
+            margin-top: 10px;
+        }
+        .last-refresh {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        .refresh-all-button {
+            background: linear-gradient(45deg, #ff5722, #e64a19);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: auto;
+            transition: all 0.3s ease;
+        }
+        .refresh-all-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -161,24 +199,28 @@
         </div>
 
         <!-- Current Data Status -->
-        <div class="data-section">
+        <div class="data-status">
             <h3 class="section-title">
                 <span class="icon">📊</span>
                 Current Data Status
             </h3>
-            <p class="description">
-                Overview of historical market data currently stored in the system.
-                This data is used to improve analysis accuracy and filter out low-volume items.
-            </p>
-
-            <div th:each="region : ${importRegions}" class="region-data">
-                <div class="region-info">
-                    <span class="region-name" th:text="${region == 10000002 ? 'The Forge (Jita)' :
-                                     (region == 10000043 ? 'Domain (Amarr)' :
-                                      (region == 10000032 ? 'Sinq Laison (Dodixie)' :
-                                       (region == 10000030 ? 'Heimatar (Rens)' :
-                                        (region == 10000042 ? 'Metropolis' : 'Region ' + region))))}"></span>
-                    <span class="data-count" th:text="'(' + ${#vars.getVariable('statsCount_' + region)} + ' market records)'"></span>
+            <div class="region-grid">
+                <div th:each="region : ${importRegions}" class="region-card">
+                    <div class="region-name" th:text="${region == 10000002 ? 'The Forge (Jita)' :
+                                                      (region == 10000043 ? 'Domain (Amarr)' :
+                                                       (region == 10000032 ? 'Sinq Laison (Dodixie)' :
+                                                        (region == 10000030 ? 'Heimatar (Rens)' :
+                                                         (region == 10000042 ? 'Metropolis' : 'Region ' + region))))}"></div>
+                    <div class="data-info">
+                        <span class="data-count" th:text="'(' + ${#vars.getVariable('statsCount_' + region)} + ' market records)'"></span>
+                        <div class="last-refresh">
+                            <span th:if="${#vars.getVariable('lastRefresh_' + region) != null}"
+                                  th:text="'Last refresh: ' + ${#temporals.format(#vars.getVariable('lastRefresh_' + region), 'MMM dd, yyyy')}"
+                                  class="refresh-date"></span>
+                            <span th:unless="${#vars.getVariable('lastRefresh_' + region) != null}"
+                                  class="refresh-date no-data">No data imported yet</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -195,13 +237,24 @@
             </p>
 
             <div class="warning">
-                <strong>⚠️ Warning:</strong> Importing data will replace all existing historical data for the selected region.
+                <strong>⚠️ Warning:</strong> Importing data will replace all existing historical data for the selected region(s).
                 This process may take several minutes for regions with extensive market activity.
             </div>
 
+            <!-- Refresh All Regions Button -->
+            <div class="import-actions">
+                <form action="/import-mokaam-all" method="post" style="display: inline-block; margin-right: 20px;">
+                    <button type="submit" class="refresh-all-button"
+                            onclick="return confirm('This will delete all existing historical data for ALL regions and import fresh data. This process may take 10-15 minutes. Continue?')">
+                        🌐 Refresh All Regions
+                    </button>
+                </form>
+            </div>
+
+            <!-- Individual Region Import -->
             <form action="/import-mokaam" method="post">
                 <div class="form-group">
-                    <label for="importRegionId">Select Region to Import Data:</label>
+                    <label for="importRegionId">Or select a specific region to import:</label>
                     <select name="regionId" id="importRegionId" required>
                         <option value="">Choose a region...</option>
                         <option th:each="region : ${importRegions}"

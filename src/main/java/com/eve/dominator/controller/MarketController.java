@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -86,10 +87,13 @@ public class MarketController {
 
         model.addAttribute("importRegions", eveConfig.getImportRegions());
 
-        // Add statistics count for each import region
+        // Add statistics count and last refresh date for each import region
         for (Long regionId : eveConfig.getImportRegions()) {
             long count = mokaamService.getStatisticsCount(regionId);
             model.addAttribute("statsCount_" + regionId, count);
+            
+            java.time.LocalDate lastRefresh = mokaamService.getLastRefreshDate(regionId);
+            model.addAttribute("lastRefresh_" + regionId, lastRefresh);
         }
 
         return "market-data-manage";
@@ -175,10 +179,13 @@ public class MarketController {
             model.addAttribute("message", result);
             model.addAttribute("importRegions", eveConfig.getImportRegions());
 
-            // Refresh statistics count for import regions
+            // Refresh statistics count and last refresh date for import regions
             for (Long regId : eveConfig.getImportRegions()) {
                 long count = mokaamService.getStatisticsCount(regId);
                 model.addAttribute("statsCount_" + regId, count);
+
+                java.time.LocalDate lastRefresh = mokaamService.getLastRefreshDate(regId);
+                model.addAttribute("lastRefresh_" + regId, lastRefresh);
             }
 
             return "market-data-manage";
@@ -186,6 +193,41 @@ public class MarketController {
             logger.error("Failed to import Mokaam data for region {}: ", regionId, e);
             model.addAttribute("error", "Failed to import Mokaam data: " + e.getMessage());
             return "error";
+        }
+    }
+
+    @PostMapping("/import-mokaam-all")
+    public String importMokaamDataAll(Model model) {
+        logger.info("Mokaam data import requested for ALL regions");
+
+        try {
+            List<String> results = new ArrayList<>();
+            
+            for (Long regionId : eveConfig.getImportRegions()) {
+                logger.info("Starting import for region: {}", regionId);
+                String result = mokaamService.importHistoricalData(regionId).block();
+                results.add(getRegionName(regionId) + ": " + result);
+                logger.info("Completed import for region {}: {}", regionId, result);
+            }
+
+            String combinedMessage = "All regions imported successfully:\n" + String.join("\n", results);
+            model.addAttribute("message", combinedMessage);
+            model.addAttribute("importRegions", eveConfig.getImportRegions());
+
+            // Refresh statistics count and last refresh date for all import regions
+            for (Long regId : eveConfig.getImportRegions()) {
+                long count = mokaamService.getStatisticsCount(regId);
+                model.addAttribute("statsCount_" + regId, count);
+
+                java.time.LocalDate lastRefresh = mokaamService.getLastRefreshDate(regId);
+                model.addAttribute("lastRefresh_" + regId, lastRefresh);
+            }
+
+            return "market-data-manage";
+        } catch (Exception e) {
+            logger.error("Failed to import Mokaam data for all regions: ", e);
+            model.addAttribute("error", "Failed to import Mokaam data for all regions: " + e.getMessage());
+            return "market-data-manage";
         }
     }
 

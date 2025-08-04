@@ -40,4 +40,7 @@ public interface MarketStatisticsRepository extends JpaRepository<MarketStatisti
 
     @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId ORDER BY ms.typeId LIMIT :limit")
     List<Integer> findDistinctTypeIdsByRegion(@Param("regionId") Long regionId, @Param("limit") int limit);
+
+    @Query("SELECT MAX(ms.date) FROM MarketStatistics ms WHERE ms.regionId = :regionId")
+    Optional<LocalDate> findLatestDateByRegionId(@Param("regionId") Long regionId);
 }

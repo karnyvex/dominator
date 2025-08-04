@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @Configuration
 @EnableConfigurationProperties
@@ -54,6 +55,26 @@ public class EveConfig {
         private boolean excludeStationTrading;
         private int minDailyTrades;
 
+        // Historical data filters (region-specific)
+        private long minVolumeMonth;
+        private long minVolumeQuarter;
+        private long minVolumeYear;
+
+        // Market size filters (in millions of ISK)
+        private long minMarketSizeMonth;
+        private long minMarketSizeQuarter;
+        private long minMarketSizeYear;
+
+        // Region-specific volume filters
+        private Map<String, Long> minVolumeMonthByRegion = new HashMap<>();
+        private Map<String, Long> minVolumeQuarterByRegion = new HashMap<>();
+        private Map<String, Long> minVolumeYearByRegion = new HashMap<>();
+
+        // Region-specific market size filters
+        private Map<String, Long> minMarketSizeMonthByRegion = new HashMap<>();
+        private Map<String, Long> minMarketSizeQuarterByRegion = new HashMap<>();
+        private Map<String, Long> minMarketSizeYearByRegion = new HashMap<>();
+
         public double getMaxInvestmentMillions() { return maxInvestmentMillions; }
         public void setMaxInvestmentMillions(double maxInvestmentMillions) { this.maxInvestmentMillions = maxInvestmentMillions; }
 
@@ -83,6 +104,68 @@ public class EveConfig {
 
         public int getMinDailyTrades() { return minDailyTrades; }
         public void setMinDailyTrades(int minDailyTrades) { this.minDailyTrades = minDailyTrades; }
+
+        public long getMinVolumeMonth() { return minVolumeMonth; }
+        public void setMinVolumeMonth(long minVolumeMonth) { this.minVolumeMonth = minVolumeMonth; }
+
+        public long getMinVolumeQuarter() { return minVolumeQuarter; }
+        public void setMinVolumeQuarter(long minVolumeQuarter) { this.minVolumeQuarter = minVolumeQuarter; }
+
+        public long getMinVolumeYear() { return minVolumeYear; }
+        public void setMinVolumeYear(long minVolumeYear) { this.minVolumeYear = minVolumeYear; }
+
+        public long getMinMarketSizeMonth() { return minMarketSizeMonth; }
+        public void setMinMarketSizeMonth(long minMarketSizeMonth) { this.minMarketSizeMonth = minMarketSizeMonth; }
+
+        public long getMinMarketSizeQuarter() { return minMarketSizeQuarter; }
+        public void setMinMarketSizeQuarter(long minMarketSizeQuarter) { this.minMarketSizeQuarter = minMarketSizeQuarter; }
+
+        public long getMinMarketSizeYear() { return minMarketSizeYear; }
+        public void setMinMarketSizeYear(long minMarketSizeYear) { this.minMarketSizeYear = minMarketSizeYear; }
+
+        // Region-specific getters and setters
+        public Map<String, Long> getMinVolumeMonthByRegion() { return minVolumeMonthByRegion; }
+        public void setMinVolumeMonthByRegion(Map<String, Long> minVolumeMonthByRegion) { this.minVolumeMonthByRegion = minVolumeMonthByRegion; }
+
+        public Map<String, Long> getMinVolumeQuarterByRegion() { return minVolumeQuarterByRegion; }
+        public void setMinVolumeQuarterByRegion(Map<String, Long> minVolumeQuarterByRegion) { this.minVolumeQuarterByRegion = minVolumeQuarterByRegion; }
+
+        public Map<String, Long> getMinVolumeYearByRegion() { return minVolumeYearByRegion; }
+        public void setMinVolumeYearByRegion(Map<String, Long> minVolumeYearByRegion) { this.minVolumeYearByRegion = minVolumeYearByRegion; }
+
+        public Map<String, Long> getMinMarketSizeMonthByRegion() { return minMarketSizeMonthByRegion; }
+        public void setMinMarketSizeMonthByRegion(Map<String, Long> minMarketSizeMonthByRegion) { this.minMarketSizeMonthByRegion = minMarketSizeMonthByRegion; }
+
+        public Map<String, Long> getMinMarketSizeQuarterByRegion() { return minMarketSizeQuarterByRegion; }
+        public void setMinMarketSizeQuarterByRegion(Map<String, Long> minMarketSizeQuarterByRegion) { this.minMarketSizeQuarterByRegion = minMarketSizeQuarterByRegion; }
+
+        public Map<String, Long> getMinMarketSizeYearByRegion() { return minMarketSizeYearByRegion; }
+        public void setMinMarketSizeYearByRegion(Map<String, Long> minMarketSizeYearByRegion) { this.minMarketSizeYearByRegion = minMarketSizeYearByRegion; }
+
+        // Helper methods to get region-specific values with fallback to global values
+        public long getMinVolumeMonth(long regionId) {
+            return minVolumeMonthByRegion.getOrDefault(String.valueOf(regionId), minVolumeMonth);
+        }
+
+        public long getMinVolumeQuarter(long regionId) {
+            return minVolumeQuarterByRegion.getOrDefault(String.valueOf(regionId), minVolumeQuarter);
+        }
+
+        public long getMinVolumeYear(long regionId) {
+            return minVolumeYearByRegion.getOrDefault(String.valueOf(regionId), minVolumeYear);
+        }
+
+        public long getMinMarketSizeMonth(long regionId) {
+            return minMarketSizeMonthByRegion.getOrDefault(String.valueOf(regionId), minMarketSizeMonth);
+        }
+
+        public long getMinMarketSizeQuarter(long regionId) {
+            return minMarketSizeQuarterByRegion.getOrDefault(String.valueOf(regionId), minMarketSizeQuarter);
+        }
+
+        public long getMinMarketSizeYear(long regionId) {
+            return minMarketSizeYearByRegion.getOrDefault(String.valueOf(regionId), minMarketSizeYear);
+        }
     }
 
     public static class MarketData {

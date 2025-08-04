@@ -32,28 +32,54 @@ public class EsiService {
     }
 
     private Mono<List<MarketOrder>> fetchAllPages(long regionId) {
-        List<MarketOrder> allOrders = new ArrayList<>();
+        return fetchPage(regionId, 1, new ArrayList<>());
+    }
 
-        return Flux.range(1, 100) // Max 100 pages to prevent infinite loops
-                .concatMap(page ->
-                        webClient.get()
-                                .uri(uriBuilder -> uriBuilder
-                                        .path("/markets/{region_id}/orders/")
-                                        .queryParam("page", page)
-                                        .build(regionId))
-                                .retrieve()
-                                .bodyToMono(MarketOrder[].class)
-                                .map(Arrays::asList)
-                                .onErrorReturn(new ArrayList<>())
-                )
-                .takeWhile(orders -> !orders.isEmpty())
-                .collectList()
-                .map(listOfLists -> {
-                    List<MarketOrder> result = new ArrayList<>();
-                    for (List<MarketOrder> orderList : listOfLists) {
-                        result.addAll(orderList);
+    private Mono<List<MarketOrder>> fetchPage(long regionId, int page, List<MarketOrder> accumulator) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/markets/{region_id}/orders/")
+                        .queryParam("page", page)
+                        .build(regionId))
+                .retrieve()
+                .toEntity(MarketOrder[].class)
+                .flatMap(response -> {
+                    MarketOrder[] orders = response.getBody();
+                    List<MarketOrder> orderList = orders != null ? Arrays.asList(orders) : new ArrayList<>();
+
+                    System.out.println("ESI Page " + page + ": " + orderList.size() + " orders");
+
+                    // Add current page orders to accumulator
+                    accumulator.addAll(orderList);
+
+                    // Check if this page was empty or less than full (indicating last page)
+                    if (orderList.isEmpty()) {
+                        System.out.println("ESI PAGINATION COMPLETE:");
+                        System.out.println("  Total pages fetched: " + (page - 1));
+                        System.out.println("  Total orders: " + accumulator.size());
+                        System.out.println("  Stopped because: Empty page received");
+                        return Mono.just(accumulator);
                     }
-                    return result;
+
+                    // ESI typically returns 1000 orders per page, if we get less, we're likely at the end
+                    if (orderList.size() < 1000) {
+                        System.out.println("ESI PAGINATION COMPLETE:");
+                        System.out.println("  Total pages fetched: " + page);
+                        System.out.println("  Total orders: " + accumulator.size());
+                        System.out.println("  Stopped because: Partial page received (" + orderList.size() + " orders)");
+                        return Mono.just(accumulator);
+                    }
+
+                    // Continue to next page
+                    return fetchPage(regionId, page + 1, accumulator);
+                })
+                .onErrorResume(error -> {
+                    // If we get a 404 or similar error, it likely means no more pages
+                    System.out.println("ESI PAGINATION COMPLETE:");
+                    System.out.println("  Total pages fetched: " + (page - 1));
+                    System.out.println("  Total orders: " + accumulator.size());
+                    System.out.println("  Stopped because: Error fetching page " + page + " - " + error.getMessage());
+                    return Mono.just(accumulator);
                 });
     }
 
