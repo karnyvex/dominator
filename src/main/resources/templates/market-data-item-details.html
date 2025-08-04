@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Item Details: ' + ${item.name} + ' - EVE Market Dominator'">Item Details - EVE Market Dominator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .item-title {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 2.2em;
+        }
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        .item-info {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .data-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .section-title {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+        .section-title .icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .data-table th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .field-name {
+            font-weight: 600;
+            color: #00d4ff;
+            min-width: 200px;
+        }
+        .data-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            text-align: right;
+        }
+        .no-data {
+            color: #888;
+            font-style: italic;
+            text-align: center;
+        }
+        .region-header {
+            text-align: center;
+            min-width: 150px;
+        }
+        .price-cell {
+            color: #ffd700;
+        }
+        .volume-cell {
+            color: #90EE90;
+        }
+        .description {
+            color: #ccc;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .category-row {
+            background: rgba(0, 212, 255, 0.1);
+            font-weight: bold;
+        }
+        .category-row td {
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="item-title" th:text="'📊 ' + ${item.name}">Item Name</h1>
+            <a href="/market-data/search" class="back-button">← Back to Search</a>
+        </div>
+
+        <!-- Item Info -->
+        <div class="item-info">
+            <h3>Item Information</h3>
+            <p><strong>Type ID:</strong> <span th:text="${item.typeId}">12345</span></p>
+            <p><strong>Name:</strong> <span th:text="${item.name}">Item Name</span></p>
+            <!-- Debug: Show regionData content -->
+            <p><strong>Debug - Region Data Size:</strong> <span th:text="${regionData != null ? regionData.size() : 'NULL'}">Debug info</span></p>
+        </div>
+
+        <!-- Market Data Section -->
+        <div class="data-section">
+            <h3 class="section-title">
+                <span class="icon">📈</span>
+                Historical Market Data by Region
+            </h3>
+            <p class="description">
+                Comprehensive market statistics across all configured regions. Data includes pricing trends,
+                volume statistics, and volatility metrics from Mokaam.dk.
+            </p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="field-name">Data Field</th>
+                        <th class="region-header">The Forge<br>(Jita)</th>
+                        <th class="region-header">Domain<br>(Amarr)</th>
+                        <th class="region-header">Sinq Laison<br>(Dodixie)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Yesterday's Data Category -->
+                    <tr class="category-row">
+                        <td colspan="4">Yesterday's Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Average Price</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePrice != null ? #numbers.formatDecimal(regionData[10000002L].averagePrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePrice != null ? #numbers.formatDecimal(regionData[10000043L].averagePrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePrice != null ? #numbers.formatDecimal(regionData[10000032L].averagePrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Highest Price</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].highestPrice != null ? #numbers.formatDecimal(regionData[10000002L].highestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].highestPrice != null ? #numbers.formatDecimal(regionData[10000043L].highestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].highestPrice != null ? #numbers.formatDecimal(regionData[10000032L].highestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Lowest Price</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000002L].lowestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000043L].lowestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000032L].lowestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Volume</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volume != null ? #numbers.formatInteger(regionData[10000002L].volume, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volume != null ? #numbers.formatInteger(regionData[10000043L].volume, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volume != null ? #numbers.formatInteger(regionData[10000032L].volume, 0, 'COMMA') : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Order Count</td>
+                        <td class="data-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].orderCount != null ? #numbers.formatInteger(regionData[10000002L].orderCount, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].orderCount != null ? #numbers.formatInteger(regionData[10000043L].orderCount, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].orderCount != null ? #numbers.formatInteger(regionData[10000032L].orderCount, 0, 'COMMA') : 'No Data'}">No Data</td>
+                    </tr>
+
+                    <!-- Weekly Data Category -->
+                    <tr class="category-row">
+                        <td colspan="4">Weekly Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Average Price (Week)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Volume (Week)</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeWeek != null ? #numbers.formatInteger(regionData[10000002L].volumeWeek, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeWeek != null ? #numbers.formatInteger(regionData[10000043L].volumeWeek, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeWeek != null ? #numbers.formatInteger(regionData[10000032L].volumeWeek, 0, 'COMMA') : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">VWAP (Week)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000002L].vwapWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000043L].vwapWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000032L].vwapWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+
+                    <!-- Monthly Data Category -->
+                    <tr class="category-row">
+                        <td colspan="4">Monthly Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Average Price (Month)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Volume (Month)</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeMonth != null ? #numbers.formatInteger(regionData[10000002L].volumeMonth, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeMonth != null ? #numbers.formatInteger(regionData[10000043L].volumeMonth, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeMonth != null ? #numbers.formatInteger(regionData[10000032L].volumeMonth, 0, 'COMMA') : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">VWAP (Month)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000002L].vwapMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000043L].vwapMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000032L].vwapMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+
+                    <!-- 52-Week Data Category -->
+                    <tr class="category-row">
+                        <td colspan="4">52-Week Extremes</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">52-Week High</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].week52High != null ? #numbers.formatDecimal(regionData[10000002L].week52High, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].week52High != null ? #numbers.formatDecimal(regionData[10000043L].week52High, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].week52High != null ? #numbers.formatDecimal(regionData[10000032L].week52High, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">52-Week Low</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].week52Low != null ? #numbers.formatDecimal(regionData[10000002L].week52Low, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].week52Low != null ? #numbers.formatDecimal(regionData[10000043L].week52Low, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].week52Low != null ? #numbers.formatDecimal(regionData[10000032L].week52Low, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

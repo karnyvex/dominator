@@ -34,4 +34,10 @@ public interface MarketStatisticsRepository extends JpaRepository<MarketStatisti
 
     @Query("SELECT COUNT(ms) FROM MarketStatistics ms WHERE ms.regionId = :regionId")
     long countByRegionId(@Param("regionId") Long regionId);
+
+    @Query("SELECT COUNT(ms) FROM MarketStatistics ms WHERE ms.typeId = :typeId")
+    long countByTypeId(@Param("typeId") Integer typeId);
+
+    @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId ORDER BY ms.typeId LIMIT :limit")
+    List<Integer> findDistinctTypeIdsByRegion(@Param("regionId") Long regionId, @Param("limit") int limit);
 }

@@ -16,11 +16,13 @@ public class MarketAnalysisService {
 
     private final EsiService esiService;
     private final EveConfig eveConfig;
+    private final NpcDetectionService npcDetectionService;
 
     @Autowired
-    public MarketAnalysisService(EsiService esiService, EveConfig eveConfig) {
+    public MarketAnalysisService(EsiService esiService, EveConfig eveConfig, NpcDetectionService npcDetectionService) {
         this.esiService = esiService;
         this.eveConfig = eveConfig;
+        this.npcDetectionService = npcDetectionService;
     }
 
     public Mono<List<MarketAnalysisResult>> analyzeMarkets(long regionId) {
@@ -72,14 +74,25 @@ public class MarketAnalysisService {
         double requiredRoi = eveConfig.getMonopoly().getTargetRoiPercentage();
         double taxRate = eveConfig.getMonopoly().getTaxPercentage() / 100.0;
 
+        // Apply NPC filtering if enabled
+        List<MarketOrder> filteredOrders = orders;
+        if (eveConfig.getMonopoly().isEnableNpcFiltering()) {
+            filteredOrders = npcDetectionService.filterNpcOrders(orders, eveConfig.getMonopoly().getNpcConfidenceThreshold());
+
+            // If all orders were filtered out as NPC, this item is not suitable for monopoly
+            if (filteredOrders.isEmpty()) {
+                return null;
+            }
+        }
+
         double totalCost = 0;
         int totalItems = 0;
         int ordersCleared = 0;
 
-        // Sort orders by price (lowest first)
-        orders.sort(Comparator.comparing(MarketOrder::getPrice));
+        // Sort filtered orders by price (lowest first)
+        filteredOrders.sort(Comparator.comparing(MarketOrder::getPrice));
 
-        for (MarketOrder order : orders) {
+        for (MarketOrder order : filteredOrders) {
             double orderCost = order.getPrice() * order.getVolumeRemain();
 
             if (totalCost + orderCost > maxInvestment) {
@@ -91,12 +104,12 @@ public class MarketAnalysisService {
             ordersCleared++;
         }
 
-        if (ordersCleared == 0 || ordersCleared >= orders.size()) {
+        if (ordersCleared == 0 || ordersCleared >= filteredOrders.size()) {
             return null; // No profitable opportunity or would clear entire market
         }
 
         // The target sell price is just below the first order we don't clear
-        double nextOrderPrice = orders.get(ordersCleared).getPrice();
+        double nextOrderPrice = filteredOrders.get(ordersCleared).getPrice();
         double targetSellPrice = nextOrderPrice - 0.01; // 1 ISK below
 
         // Calculate required minimum sell price for desired ROI

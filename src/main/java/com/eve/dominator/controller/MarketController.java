@@ -1,7 +1,10 @@
 package com.eve.dominator.controller;
 
 import com.eve.dominator.config.EveConfig;
+import com.eve.dominator.model.ItemName;
 import com.eve.dominator.model.MarketAnalysisResult;
+import com.eve.dominator.model.MarketStatistics;
+import com.eve.dominator.service.ItemNameService;
 import com.eve.dominator.service.MarketAnalysisService;
 import com.eve.dominator.service.MokaamService;
 import org.slf4j.Logger;
@@ -10,10 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class MarketController {
@@ -23,12 +31,14 @@ public class MarketController {
     private final MarketAnalysisService marketAnalysisService;
     private final MokaamService mokaamService;
     private final EveConfig eveConfig;
+    private final ItemNameService itemNameService;
 
     @Autowired
-    public MarketController(MarketAnalysisService marketAnalysisService, MokaamService mokaamService, EveConfig eveConfig) {
+    public MarketController(MarketAnalysisService marketAnalysisService, MokaamService mokaamService, EveConfig eveConfig, ItemNameService itemNameService) {
         this.marketAnalysisService = marketAnalysisService;
         this.mokaamService = mokaamService;
         this.eveConfig = eveConfig;
+        this.itemNameService = itemNameService;
         logger.info("MarketController initialized with config: {}", eveConfig);
     }
 
@@ -54,7 +64,24 @@ public class MarketController {
 
     @GetMapping("/market-data")
     public String marketDataPage(Model model) {
-        logger.info("Market data page requested");
+        logger.info("Market data landing page requested");
+
+        // Add item names count for display
+        long itemNamesCount = itemNameService.getItemNamesCount();
+        model.addAttribute("itemNamesCount", itemNamesCount);
+
+        // Add statistics count for each import region
+        for (Long regionId : eveConfig.getImportRegions()) {
+            long count = mokaamService.getStatisticsCount(regionId);
+            model.addAttribute("statsCount_" + regionId, count);
+        }
+
+        return "market-data";
+    }
+
+    @GetMapping("/market-data/manage")
+    public String marketDataManagePage(Model model) {
+        logger.info("Market data management page requested");
         logger.info("Import Regions: {}", eveConfig.getImportRegions());
 
         model.addAttribute("importRegions", eveConfig.getImportRegions());
@@ -65,7 +92,39 @@ public class MarketController {
             model.addAttribute("statsCount_" + regionId, count);
         }
 
-        return "market-data";
+        return "market-data-manage";
+    }
+
+    @GetMapping("/market-data/search")
+    public String marketDataSearchPage(Model model) {
+        logger.info("Market data search page requested");
+
+        long itemNamesCount = itemNameService.getItemNamesCount();
+        model.addAttribute("itemNamesCount", itemNamesCount);
+        model.addAttribute("importRegions", eveConfig.getImportRegions());
+
+        return "market-data-search";
+    }
+
+    @PostMapping("/market-data/search")
+    public String searchMarketData(@RequestParam String searchTerm, Model model) {
+        logger.info("Market data search requested for: {}", searchTerm);
+
+        try {
+            List<ItemName> items = itemNameService.searchItemsByName(searchTerm);
+            model.addAttribute("searchTerm", searchTerm);
+            model.addAttribute("searchResults", items);
+            model.addAttribute("importRegions", eveConfig.getImportRegions());
+
+            long itemNamesCount = itemNameService.getItemNamesCount();
+            model.addAttribute("itemNamesCount", itemNamesCount);
+
+            return "market-data-search";
+        } catch (Exception e) {
+            logger.error("Failed to search market data for term {}: ", searchTerm, e);
+            model.addAttribute("error", "Failed to search market data: " + e.getMessage());
+            return "market-data-search";
+        }
     }
 
     @PostMapping("/analyze")
@@ -106,12 +165,98 @@ public class MarketController {
                 model.addAttribute("statsCount_" + regId, count);
             }
 
-            return "market-data";
+            return "market-data-manage";
         } catch (Exception e) {
             logger.error("Failed to import Mokaam data for region {}: ", regionId, e);
             model.addAttribute("error", "Failed to import Mokaam data: " + e.getMessage());
             return "error";
         }
+    }
+
+    @GetMapping("/market-data/item/{typeId}")
+    public String marketDataItemDetails(@PathVariable Integer typeId, Model model) {
+        logger.info("Market data item details requested for type ID: {}", typeId);
+
+        try {
+            // Get item name
+            ItemName itemName = itemNameService.getItemByTypeId(typeId);
+            if (itemName == null) {
+                logger.warn("Item not found for type ID: {}", typeId);
+                model.addAttribute("error", "Item not found");
+                return "market-data-search";
+            }
+
+            // Get market statistics for this item across all regions
+            Map<Long, MarketStatistics> regionData = new HashMap<>();
+            for (Long regionId : eveConfig.getImportRegions()) {
+                logger.debug("Searching for statistics: typeId={}, regionId={}", typeId, regionId);
+                MarketStatistics stats = mokaamService.getLatestStatisticsForItem(typeId, regionId);
+                if (stats != null) {
+                    logger.info("Found statistics for typeId={}, regionId={}: date={}, avgPrice={}", 
+                               typeId, regionId, stats.getDate(), stats.getAveragePrice());
+                    regionData.put(regionId, stats);
+                } else {
+                    logger.warn("No statistics found for typeId={}, regionId={}", typeId, regionId);
+                }
+            }
+
+            logger.info("Total regions with data for typeId {}: {}", typeId, regionData.size());
+
+            model.addAttribute("item", itemName);
+            model.addAttribute("regionData", regionData);
+            model.addAttribute("importRegions", eveConfig.getImportRegions());
+
+            return "market-data-item-details";
+        } catch (Exception e) {
+            logger.error("Failed to load item details for type {}: ", typeId, e);
+            model.addAttribute("error", "Failed to load item details: " + e.getMessage());
+            return "market-data-search";
+        }
+    }
+
+    @GetMapping("/debug/market-data")
+    public String debugMarketData(Model model) {
+        logger.info("Debug market data endpoint requested");
+
+        Map<String, Object> debugInfo = new HashMap<>();
+
+        // Check item names count
+        long itemNamesCount = itemNameService.getItemNamesCount();
+        debugInfo.put("itemNamesCount", itemNamesCount);
+
+        // Check statistics count per region
+        Map<Long, Long> regionCounts = new HashMap<>();
+        for (Long regionId : eveConfig.getImportRegions()) {
+            long count = mokaamService.getStatisticsCount(regionId);
+            regionCounts.put(regionId, count);
+        }
+        debugInfo.put("regionCounts", regionCounts);
+
+        // Get sample type IDs from database
+        Map<Long, List<Integer>> sampleTypeIds = new HashMap<>();
+        Set<Integer> allTypeIdsWithData = new java.util.HashSet<>();
+        for (Long regionId : eveConfig.getImportRegions()) {
+            List<Integer> typeIds = mokaamService.getSampleTypeIds(regionId, 10);
+            sampleTypeIds.put(regionId, typeIds);
+            allTypeIdsWithData.addAll(typeIds);
+        }
+        debugInfo.put("sampleTypeIds", sampleTypeIds);
+        debugInfo.put("typeIdsWithData", allTypeIdsWithData);
+
+        // Get item names for these type IDs to show what items actually have market data
+        Map<Integer, String> itemNamesForSampleTypes = new HashMap<>();
+        for (Integer typeId : allTypeIdsWithData) {
+            ItemName itemName = itemNameService.getItemByTypeId(typeId);
+            if (itemName != null) {
+                itemNamesForSampleTypes.put(typeId, itemName.getName());
+            } else {
+                itemNamesForSampleTypes.put(typeId, null);
+            }
+        }
+        debugInfo.put("itemNamesForSampleTypes", itemNamesForSampleTypes);
+
+        model.addAttribute("debugInfo", debugInfo);
+        return "debug-market-data";
     }
 
     private String getRegionName(Long regionId) {

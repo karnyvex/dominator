@@ -372,4 +372,24 @@ public class MokaamService {
     public long getStatisticsCount(Long regionId) {
         return statisticsRepository.countByRegionId(regionId);
     }
+
+    public MarketStatistics getLatestStatisticsForItem(Integer typeId, Long regionId) {
+        List<MarketStatistics> stats = statisticsRepository.findByTypeIdAndRegionIdOrderByDateDesc(typeId, regionId);
+        logger.debug("Query for typeId={}, regionId={} returned {} results", typeId, regionId, stats.size());
+        if (!stats.isEmpty()) {
+            MarketStatistics latest = stats.get(0);
+            logger.debug("Latest stats: date={}, avgPrice={}, volume={}",
+                        latest.getDate(), latest.getAveragePrice(), latest.getVolume());
+            return latest;
+        }
+        return null;
+    }
+
+    public List<Integer> getSampleTypeIds(Long regionId, int limit) {
+        return statisticsRepository.findDistinctTypeIdsByRegion(regionId, limit);
+    }
+
+    public long getStatisticsCountForTypeId(Integer typeId) {
+        return statisticsRepository.countByTypeId(typeId);
+    }
 }

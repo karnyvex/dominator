@@ -16,6 +16,7 @@ public class EveConfig {
     private List<Long> importRegions;
     private Map<Long, Long> stations;
     private Monopoly monopoly = new Monopoly();
+    private MarketData marketData = new MarketData();
     private Esi esi = new Esi();
     private Mokaam mokaam = new Mokaam();
 
@@ -32,6 +33,9 @@ public class EveConfig {
     public Monopoly getMonopoly() { return monopoly; }
     public void setMonopoly(Monopoly monopoly) { this.monopoly = monopoly; }
 
+    public MarketData getMarketData() { return marketData; }
+    public void setMarketData(MarketData marketData) { this.marketData = marketData; }
+
     public Esi getEsi() { return esi; }
     public void setEsi(Esi esi) { this.esi = esi; }
 
@@ -42,6 +46,8 @@ public class EveConfig {
         private double maxInvestmentMillions;
         private double targetRoiPercentage;
         private double taxPercentage;
+        private boolean enableNpcFiltering;
+        private double npcConfidenceThreshold;
         private long minVolumeThreshold;
         private int maxCompetitors;
         private double minMarginPercentage;
@@ -57,6 +63,12 @@ public class EveConfig {
         public double getTaxPercentage() { return taxPercentage; }
         public void setTaxPercentage(double taxPercentage) { this.taxPercentage = taxPercentage; }
 
+        public boolean isEnableNpcFiltering() { return enableNpcFiltering; }
+        public void setEnableNpcFiltering(boolean enableNpcFiltering) { this.enableNpcFiltering = enableNpcFiltering; }
+
+        public double getNpcConfidenceThreshold() { return npcConfidenceThreshold; }
+        public void setNpcConfidenceThreshold(double npcConfidenceThreshold) { this.npcConfidenceThreshold = npcConfidenceThreshold; }
+
         public long getMinVolumeThreshold() { return minVolumeThreshold; }
         public void setMinVolumeThreshold(long minVolumeThreshold) { this.minVolumeThreshold = minVolumeThreshold; }
 
@@ -71,6 +83,13 @@ public class EveConfig {
 
         public int getMinDailyTrades() { return minDailyTrades; }
         public void setMinDailyTrades(int minDailyTrades) { this.minDailyTrades = minDailyTrades; }
+    }
+
+    public static class MarketData {
+        private boolean enableItemNamesImport;
+
+        public boolean isEnableItemNamesImport() { return enableItemNamesImport; }
+        public void setEnableItemNamesImport(boolean enableItemNamesImport) { this.enableItemNamesImport = enableItemNamesImport; }
     }
 
     public static class Esi {

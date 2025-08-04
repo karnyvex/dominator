@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Search - EVE Market Dominator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #00d4ff;
+            margin: 0;
+            font-size: 2.2em;
+        }
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        .search-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+        .section-title .icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+        }
+        .search-btn {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+        .info-box {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .results-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .results-table th,
+        .results-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .results-table th {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .results-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .no-results {
+            text-align: center;
+            color: #ccc;
+            padding: 40px;
+            font-style: italic;
+        }
+        .data-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .region-header {
+            text-align: center;
+            writing-mode: horizontal-tb;
+        }
+        .description {
+            color: #ccc;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Data Search</h1>
+            <a href="/market-data" class="back-button">← Back to Hub</a>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <h3 class="section-title">
+                <span class="icon">🔎</span>
+                Search Market Data
+            </h3>
+            <p class="description">
+                Search for items by name to view historical market data across all regions.
+                Data includes pricing, volume, and trading statistics.
+            </p>
+
+            <form action="/market-data/search" method="post" class="search-form">
+                <div class="form-group">
+                    <label for="searchTerm">Item Name:</label>
+                    <input type="text"
+                           id="searchTerm"
+                           name="searchTerm"
+                           th:value="${searchTerm}"
+                           placeholder="Enter item name (e.g., Tritanium, Veldspar, etc.)"
+                           required>
+                </div>
+                <button type="submit" class="search-btn">🔍 Search</button>
+            </form>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <strong>Database Status:</strong> <span th:text="${itemNamesCount}">0</span> item names available for search
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="error">
+            <p th:text="${error}"></p>
+        </div>
+
+        <!-- Results Section -->
+        <div th:if="${searchResults}" class="results-section">
+            <h3 class="section-title">
+                <span class="icon">📊</span>
+                Search Results
+            </h3>
+            <p th:if="${searchTerm}" class="description">
+                Search results for: "<strong th:text="${searchTerm}"></strong>"
+                (<span th:text="${#lists.size(searchResults)}">0</span> items found)
+            </p>
+
+            <div th:if="${#lists.isEmpty(searchResults)}" class="no-results">
+                <p>No items found matching your search term.</p>
+                <p>Try using partial names or check your spelling.</p>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(searchResults)}">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Type ID</th>
+                            <th class="region-header">Data Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${searchResults}">
+                            <td>
+                                <a th:href="@{/market-data/item/{typeId}(typeId=${item.typeId})}"
+                                   th:text="${item.name}"
+                                   style="color: #00d4ff; text-decoration: none; font-weight: 600;">
+                                   Item Name
+                                </a>
+                            </td>
+                            <td class="data-cell" th:text="${item.typeId}">12345</td>
+                            <td class="data-cell">
+                                <span th:if="${#vars.getVariable('statsCount_10000002') > 0 || #vars.getVariable('statsCount_10000043') > 0 || #vars.getVariable('statsCount_10000032') > 0}"
+                                      style="color: #00ff00;">✓ Available</span>
+                                <span th:unless="${#vars.getVariable('statsCount_10000002') > 0 || #vars.getVariable('statsCount_10000043') > 0 || #vars.getVariable('statsCount_10000032') > 0}"
+                                      style="color: #ff6b6b;">✗ No Data</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
