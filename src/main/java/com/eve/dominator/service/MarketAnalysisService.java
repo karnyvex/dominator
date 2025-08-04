@@ -217,10 +217,11 @@ public class MarketAnalysisService {
                     double scenarioCost = runningCost + (partialItems * currentOrder.getPrice());
                     int scenarioItems = runningItems + partialItems;
                     double targetPrice = orders.get(stopIndex + 1).getPrice() - 0.01;
+                    double highestBuyPrice = currentOrder.getPrice(); // Price of the current (last) order being partially bought
 
                     System.out.println("Testing partial scenario: buy " + scenarioItems + " items for " + scenarioCost + " ISK, target price: " + targetPrice);
 
-                    MarketAnalysisResult scenario = evaluateScenario(typeId, stopIndex + 1, scenarioItems, scenarioCost, targetPrice, requiredRoi, taxRate);
+                    MarketAnalysisResult scenario = evaluateScenario(typeId, stopIndex + 1, scenarioItems, scenarioCost, targetPrice, requiredRoi, taxRate, highestBuyPrice);
                     if (scenario != null && (bestOpportunity == null || scenario.getRoiPercentage() > bestOpportunity.getRoiPercentage())) {
                         bestOpportunity = scenario;
                     }
@@ -234,10 +235,11 @@ public class MarketAnalysisService {
 
             // Target price is just below the next order
             double targetPrice = orders.get(stopIndex + 1).getPrice() - 0.01;
+            double highestBuyPrice = currentOrder.getPrice(); // Price of the current (last) order being bought
 
             System.out.println("Testing full scenario: buy " + runningItems + " items for " + runningCost + " ISK, target price: " + targetPrice);
 
-            MarketAnalysisResult scenario = evaluateScenario(typeId, stopIndex + 1, runningItems, runningCost, targetPrice, requiredRoi, taxRate);
+            MarketAnalysisResult scenario = evaluateScenario(typeId, stopIndex + 1, runningItems, runningCost, targetPrice, requiredRoi, taxRate, highestBuyPrice);
             if (scenario != null && (bestOpportunity == null || scenario.getRoiPercentage() > bestOpportunity.getRoiPercentage())) {
                 bestOpportunity = scenario;
                 System.out.println("New best opportunity found with ROI: " + scenario.getRoiPercentage() + "%");
@@ -257,7 +259,7 @@ public class MarketAnalysisService {
     }
 
     private MarketAnalysisResult evaluateScenario(int typeId, int ordersCleared, int totalItems,
-                                                 double totalCost, double targetSellPrice, double requiredRoi, double taxRate) {
+                                                 double totalCost, double targetSellPrice, double requiredRoi, double taxRate, double highestBuyPrice) {
 
         // Calculate required minimum sell price for desired ROI
         double avgBuyPrice = totalCost / totalItems;
@@ -280,6 +282,7 @@ public class MarketAnalysisService {
         result.setProfitPerItem(profitPerItem);
         result.setTotalProfit(totalProfit);
         result.setRoiPercentage(actualRoi);
+        result.setHighestBuyPrice(highestBuyPrice); // Add the highest buy price for display
 
         return result;
     }

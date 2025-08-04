@@ -8,6 +8,7 @@ public class MarketAnalysisResult {
     private int totalItemsToBuy;
     private double totalInvestment;
     private double targetSellPrice;
+    private double highestBuyPrice;
     private double profitPerItem;
     private double totalProfit;
     private double roiPercentage;
@@ -43,6 +44,9 @@ public class MarketAnalysisResult {
 
     public double getTargetSellPrice() { return targetSellPrice; }
     public void setTargetSellPrice(double targetSellPrice) { this.targetSellPrice = targetSellPrice; }
+
+    public double getHighestBuyPrice() { return highestBuyPrice; }
+    public void setHighestBuyPrice(double highestBuyPrice) { this.highestBuyPrice = highestBuyPrice; }
 
     public double getProfitPerItem() { return profitPerItem; }
     public void setProfitPerItem(double profitPerItem) { this.profitPerItem = profitPerItem; }

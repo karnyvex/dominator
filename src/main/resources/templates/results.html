@@ -133,6 +133,7 @@
                         <th class="sortable" data-column="ordersToBeCleared" data-type="number">Orders to Clear</th>
                         <th class="sortable" data-column="totalItemsToBuy" data-type="number">Items to Buy</th>
                         <th class="sortable" data-column="totalInvestment" data-type="number">Investment (ISK)</th>
+                        <th class="sortable" data-column="highestBuyPrice" data-type="number">Highest Buy Price</th>
                         <th class="sortable" data-column="targetSellPrice" data-type="number">Target Sell Price</th>
                         <th class="sortable" data-column="profitPerItem" data-type="number">Profit per Item</th>
                         <th class="sortable" data-column="totalProfit" data-type="number">Total Profit</th>
@@ -145,6 +146,7 @@
                         <td class="number" th:text="${#numbers.formatInteger(result.ordersToBeCleared, 0, 'COMMA')}"></td>
                         <td class="number" th:text="${#numbers.formatInteger(result.totalItemsToBuy, 0, 'COMMA')}"></td>
                         <td class="number" th:text="${#numbers.formatDecimal(result.totalInvestment, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
+                        <td class="number" th:text="${#numbers.formatDecimal(result.highestBuyPrice, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
                         <td class="number" th:text="${#numbers.formatDecimal(result.targetSellPrice, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
                         <td class="number profit-positive" th:text="${#numbers.formatDecimal(result.profitPerItem, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
                         <td class="number profit-positive" th:text="${#numbers.formatDecimal(result.totalProfit, 0, 'COMMA', 2, 'POINT')} + ' ISK'"></td>
