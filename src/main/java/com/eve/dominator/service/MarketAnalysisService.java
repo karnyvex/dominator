@@ -295,8 +295,8 @@ public class MarketAnalysisService {
             try {
                 MarketStatistics latestStats = mokaamService.getLatestStatisticsForItem(typeId, regionId);
                 if (latestStats == null) {
-                    // No historical data available, skip filtering
-                    return true;
+                    // No historical data available, ignore this item
+                    return false;
                 }
 
                 // Check monthly volume requirement (region-specific with fallback to global)
