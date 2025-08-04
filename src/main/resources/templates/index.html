@@ -63,11 +63,47 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
         }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .message.success {
+            background-color: rgba(0, 255, 0, 0.1);
+            color: #000;
+        }
+        .analysis-section, .data-section {
+            margin-bottom: 30px;
+        }
+        .data-info {
+            margin-bottom: 10px;
+        }
+        .region-data {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .region-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .import-form {
+            display: flex;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🚀 EVE Online Market Dominator</h1>
+
+        <!-- Success/Info Messages -->
+        <div th:if="${message}" class="message success">
+            <p th:text="${message}"></p>
+        </div>
 
         <div class="config-info">
             <h3>Current Configuration</h3>
@@ -76,20 +112,71 @@
             <p><strong>Tax Rate:</strong> <span th:text="${taxPercentage}"></span>%</p>
         </div>
 
-        <form action="/analyze" method="post">
-            <div class="form-group">
-                <label for="regionId">Select Region to Analyze:</label>
-                <select name="regionId" id="regionId" required>
-                    <option value="">Choose a region...</option>
-                    <option th:each="region : ${regions}"
-                            th:value="${region}"
-                            th:text="${region == 10000002 ? 'The Forge (Jita)' : 'Region ' + region}">
-                    </option>
-                </select>
+        <!-- Market Analysis Section -->
+        <div class="analysis-section">
+            <h3>📊 Market Analysis</h3>
+            <form action="/analyze" method="post">
+                <div class="form-group">
+                    <label for="regionId">Select Region to Analyze:</label>
+                    <select name="regionId" id="regionId" required>
+                        <option value="">Choose a region...</option>
+                        <option th:each="region : ${regions}"
+                                th:value="${region}"
+                                th:text="${region == 10000002 ? 'The Forge (Jita)' :
+                                         (region == 10000043 ? 'Domain (Amarr)' :
+                                          (region == 10000032 ? 'Sinq Laison (Dodixie)' :
+                                           (region == 10000030 ? 'Heimatar (Rens)' :
+                                            (region == 10000042 ? 'Metropolis' : 'Region ' + region))))}">
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="analyze-btn">🎯 Initiate Market Analysis</button>
+            </form>
+        </div>
+
+        <!-- Historical Data Section -->
+        <div class="data-section">
+            <h3>📈 Historical Market Data</h3>
+            <p class="data-info">Import historical data from Mokaam.dk for better market analysis and filtering.</p>
+
+            <!-- Data Statistics -->
+            <div class="data-stats">
+                <div th:each="region : ${importRegions}" class="region-data">
+                    <div class="region-info">
+                        <strong th:text="${region == 10000002 ? 'The Forge (Jita)' :
+                                         (region == 10000043 ? 'Domain (Amarr)' :
+                                          (region == 10000032 ? 'Sinq Laison (Dodixie)' :
+                                           (region == 10000030 ? 'Heimatar (Rens)' :
+                                            (region == 10000042 ? 'Metropolis' : 'Region ' + region))))}"></strong>
+                        <span class="data-count" th:text="'(' + ${#vars.getVariable('statsCount_' + region)} + ' records)'"></span>
+                    </div>
+                </div>
             </div>
 
-            <button type="submit">🎯 Initiate Market Analysis</button>
-        </form>
+            <!-- Import Form -->
+            <form action="/import-mokaam" method="post">
+                <div class="form-group">
+                    <label for="importRegionId">Select Region to Import Data:</label>
+                    <select name="regionId" id="importRegionId" required>
+                        <option value="">Choose a region...</option>
+                        <option th:each="region : ${importRegions}"
+                                th:value="${region}"
+                                th:text="${region == 10000002 ? 'The Forge (Jita)' :
+                                         (region == 10000043 ? 'Domain (Amarr)' :
+                                          (region == 10000032 ? 'Sinq Laison (Dodixie)' :
+                                           (region == 10000030 ? 'Heimatar (Rens)' :
+                                            (region == 10000042 ? 'Metropolis' : 'Region ' + region))))}">
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="import-btn"
+                        onclick="return confirm('This will delete all existing historical data for the selected region and import fresh data. Continue?')">
+                    🔄 Import Historical Data
+                </button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

@@ -3,6 +3,7 @@ package com.eve.dominator.controller;
 import com.eve.dominator.config.EveConfig;
 import com.eve.dominator.model.MarketAnalysisResult;
 import com.eve.dominator.service.MarketAnalysisService;
+import com.eve.dominator.service.MokaamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,13 @@ public class MarketController {
     private static final Logger logger = LoggerFactory.getLogger(MarketController.class);
 
     private final MarketAnalysisService marketAnalysisService;
+    private final MokaamService mokaamService;
     private final EveConfig eveConfig;
 
     @Autowired
-    public MarketController(MarketAnalysisService marketAnalysisService, EveConfig eveConfig) {
+    public MarketController(MarketAnalysisService marketAnalysisService, MokaamService mokaamService, EveConfig eveConfig) {
         this.marketAnalysisService = marketAnalysisService;
+        this.mokaamService = mokaamService;
         this.eveConfig = eveConfig;
         logger.info("MarketController initialized with config: {}", eveConfig);
     }
@@ -36,9 +39,17 @@ public class MarketController {
         logger.info("Max Investment: {}", eveConfig.getInvestment().getMaxMillions());
 
         model.addAttribute("regions", eveConfig.getRegions());
+        model.addAttribute("importRegions", eveConfig.getImportRegions());
         model.addAttribute("maxInvestment", eveConfig.getInvestment().getMaxMillions());
         model.addAttribute("roiPercentage", eveConfig.getProfit().getRoiPercentage());
         model.addAttribute("taxPercentage", eveConfig.getProfit().getTaxPercentage());
+
+        // Add statistics count for each import region
+        for (Long regionId : eveConfig.getImportRegions()) {
+            long count = mokaamService.getStatisticsCount(regionId);
+            model.addAttribute("statsCount_" + regionId, count);
+        }
+
         return "index";
     }
 
@@ -63,11 +74,43 @@ public class MarketController {
         }
     }
 
-    private String getRegionName(Long regionId) {
-        // For now, just handle The Forge
-        if (regionId == 10000002L) {
-            return "The Forge";
+    @PostMapping("/import-mokaam")
+    public String importMokaamData(@RequestParam Long regionId, Model model) {
+        logger.info("Mokaam data import requested for region: {}", regionId);
+
+        try {
+            String result = mokaamService.importHistoricalData(regionId).block();
+            logger.info("Mokaam import completed: {}", result);
+
+            model.addAttribute("message", result);
+            model.addAttribute("regions", eveConfig.getRegions());
+            model.addAttribute("importRegions", eveConfig.getImportRegions());
+            model.addAttribute("maxInvestment", eveConfig.getInvestment().getMaxMillions());
+            model.addAttribute("roiPercentage", eveConfig.getProfit().getRoiPercentage());
+            model.addAttribute("taxPercentage", eveConfig.getProfit().getTaxPercentage());
+
+            // Refresh statistics count for import regions
+            for (Long regId : eveConfig.getImportRegions()) {
+                long count = mokaamService.getStatisticsCount(regId);
+                model.addAttribute("statsCount_" + regId, count);
+            }
+
+            return "index";
+        } catch (Exception e) {
+            logger.error("Failed to import Mokaam data for region {}: ", regionId, e);
+            model.addAttribute("error", "Failed to import Mokaam data: " + e.getMessage());
+            return "error";
         }
-        return "Region " + regionId;
+    }
+
+    private String getRegionName(Long regionId) {
+        switch (regionId.intValue()) {
+            case 10000002: return "The Forge (Jita)";
+            case 10000043: return "Domain (Amarr)";
+            case 10000032: return "Sinq Laison (Dodixie)";
+            case 10000030: return "Heimatar (Rens)";
+            case 10000042: return "Metropolis";
+            default: return "Region " + regionId;
+        }
     }
 }

@@ -13,14 +13,19 @@ import java.util.Map;
 public class EveConfig {
 
     private List<Long> regions;
+    private List<Long> importRegions;
     private Map<Long, Long> stations;
     private Investment investment = new Investment();
     private Profit profit = new Profit();
     private Esi esi = new Esi();
+    private Mokaam mokaam = new Mokaam();
 
     // Getters and setters
     public List<Long> getRegions() { return regions; }
     public void setRegions(List<Long> regions) { this.regions = regions; }
+
+    public List<Long> getImportRegions() { return importRegions; }
+    public void setImportRegions(List<Long> importRegions) { this.importRegions = importRegions; }
 
     public Map<Long, Long> getStations() { return stations; }
     public void setStations(Map<Long, Long> stations) { this.stations = stations; }
@@ -33,6 +38,9 @@ public class EveConfig {
 
     public Esi getEsi() { return esi; }
     public void setEsi(Esi esi) { this.esi = esi; }
+
+    public Mokaam getMokaam() { return mokaam; }
+    public void setMokaam(Mokaam mokaam) { this.mokaam = mokaam; }
 
     public static class Investment {
         private double maxMillions;
@@ -53,6 +61,17 @@ public class EveConfig {
     }
 
     public static class Esi {
+        private String baseUrl;
+        private String userAgent;
+
+        public String getBaseUrl() { return baseUrl; }
+        public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
+
+        public String getUserAgent() { return userAgent; }
+        public void setUserAgent(String userAgent) { this.userAgent = userAgent; }
+    }
+
+    public static class Mokaam {
         private String baseUrl;
         private String userAgent;
 
