@@ -112,8 +112,24 @@ public class MarketController {
 
         try {
             List<ItemName> items = itemNameService.searchItemsByName(searchTerm);
+
+            // Check which items have market data available
+            Map<Integer, Boolean> itemDataAvailability = new HashMap<>();
+            for (ItemName item : items) {
+                boolean hasData = false;
+                for (Long regionId : eveConfig.getImportRegions()) {
+                    MarketStatistics stats = mokaamService.getLatestStatisticsForItem(item.getTypeId(), regionId);
+                    if (stats != null) {
+                        hasData = true;
+                        break; // Found data in at least one region
+                    }
+                }
+                itemDataAvailability.put(item.getTypeId(), hasData);
+            }
+
             model.addAttribute("searchTerm", searchTerm);
             model.addAttribute("searchResults", items);
+            model.addAttribute("itemDataAvailability", itemDataAvailability);
             model.addAttribute("importRegions", eveConfig.getImportRegions());
 
             long itemNamesCount = itemNameService.getItemNamesCount();

@@ -14,7 +14,7 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.1);
             padding: 30px;
@@ -75,7 +75,7 @@
         }
         .data-table th,
         .data-table td {
-            padding: 12px;
+            padding: 10px;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -93,21 +93,16 @@
         .field-name {
             font-weight: 600;
             color: #00d4ff;
-            min-width: 200px;
+            min-width: 180px;
         }
         .data-cell {
             font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            font-size: 0.85em;
             text-align: right;
-        }
-        .no-data {
-            color: #888;
-            font-style: italic;
-            text-align: center;
         }
         .region-header {
             text-align: center;
-            min-width: 150px;
+            min-width: 120px;
         }
         .price-cell {
             color: #ffd700;
@@ -163,105 +158,191 @@
                         <th class="region-header">The Forge<br>(Jita)</th>
                         <th class="region-header">Domain<br>(Amarr)</th>
                         <th class="region-header">Sinq Laison<br>(Dodixie)</th>
+                        <th class="region-header">Heimatar<br>(Rens)</th>
+                        <th class="region-header">Metropolis<br>(Hek)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Yesterday's Data Category -->
                     <tr class="category-row">
-                        <td colspan="4">Yesterday's Data</td>
+                        <td colspan="6">Yesterday's Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">Average Price</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePrice != null ? #numbers.formatDecimal(regionData[10000002L].averagePrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePrice != null ? #numbers.formatDecimal(regionData[10000043L].averagePrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePrice != null ? #numbers.formatDecimal(regionData[10000032L].averagePrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePrice != null ? #numbers.formatDecimal(regionData[10000002L].averagePrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePrice != null ? #numbers.formatDecimal(regionData[10000043L].averagePrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePrice != null ? #numbers.formatDecimal(regionData[10000032L].averagePrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].averagePrice != null ? #numbers.formatDecimal(regionData[10000030L].averagePrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].averagePrice != null ? #numbers.formatDecimal(regionData[10000042L].averagePrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">Highest Price</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].highestPrice != null ? #numbers.formatDecimal(regionData[10000002L].highestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].highestPrice != null ? #numbers.formatDecimal(regionData[10000043L].highestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].highestPrice != null ? #numbers.formatDecimal(regionData[10000032L].highestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].highestPrice != null ? #numbers.formatDecimal(regionData[10000002L].highestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].highestPrice != null ? #numbers.formatDecimal(regionData[10000043L].highestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].highestPrice != null ? #numbers.formatDecimal(regionData[10000032L].highestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].highestPrice != null ? #numbers.formatDecimal(regionData[10000030L].highestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].highestPrice != null ? #numbers.formatDecimal(regionData[10000042L].highestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">Lowest Price</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000002L].lowestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000043L].lowestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000032L].lowestPrice, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000002L].lowestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000043L].lowestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000032L].lowestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000030L].lowestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].lowestPrice != null ? #numbers.formatDecimal(regionData[10000042L].lowestPrice, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">Volume</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volume != null ? #numbers.formatInteger(regionData[10000002L].volume, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volume != null ? #numbers.formatInteger(regionData[10000043L].volume, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volume != null ? #numbers.formatInteger(regionData[10000032L].volume, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volume != null ? #numbers.formatInteger(regionData[10000002L].volume, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volume != null ? #numbers.formatInteger(regionData[10000043L].volume, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volume != null ? #numbers.formatInteger(regionData[10000032L].volume, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].volume != null ? #numbers.formatInteger(regionData[10000030L].volume, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].volume != null ? #numbers.formatInteger(regionData[10000042L].volume, 1, 'COMMA') : 'No Data'}">No Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">Order Count</td>
-                        <td class="data-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].orderCount != null ? #numbers.formatInteger(regionData[10000002L].orderCount, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].orderCount != null ? #numbers.formatInteger(regionData[10000043L].orderCount, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].orderCount != null ? #numbers.formatInteger(regionData[10000032L].orderCount, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].orderCount != null ? #numbers.formatInteger(regionData[10000002L].orderCount, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].orderCount != null ? #numbers.formatInteger(regionData[10000043L].orderCount, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].orderCount != null ? #numbers.formatInteger(regionData[10000032L].orderCount, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].orderCount != null ? #numbers.formatInteger(regionData[10000030L].orderCount, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].orderCount != null ? #numbers.formatInteger(regionData[10000042L].orderCount, 1, 'COMMA') : 'No Data'}">No Data</td>
                     </tr>
 
                     <!-- Weekly Data Category -->
                     <tr class="category-row">
-                        <td colspan="4">Weekly Data</td>
+                        <td colspan="6">Weekly Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">Average Price (Week)</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                    </tr>
-                    <tr>
-                        <td class="field-name">Volume (Week)</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeWeek != null ? #numbers.formatInteger(regionData[10000002L].volumeWeek, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeWeek != null ? #numbers.formatInteger(regionData[10000043L].volumeWeek, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeWeek != null ? #numbers.formatInteger(regionData[10000032L].volumeWeek, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000030L].averagePriceWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].averagePriceWeek != null ? #numbers.formatDecimal(regionData[10000042L].averagePriceWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">VWAP (Week)</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000002L].vwapWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000043L].vwapWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000032L].vwapWeek, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000002L].vwapWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000043L].vwapWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000032L].vwapWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000030L].vwapWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].vwapWeek != null ? #numbers.formatDecimal(regionData[10000042L].vwapWeek, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Volume (Week)</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeWeek != null ? #numbers.formatInteger(regionData[10000002L].volumeWeek, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeWeek != null ? #numbers.formatInteger(regionData[10000043L].volumeWeek, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeWeek != null ? #numbers.formatInteger(regionData[10000032L].volumeWeek, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].volumeWeek != null ? #numbers.formatInteger(regionData[10000030L].volumeWeek, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].volumeWeek != null ? #numbers.formatInteger(regionData[10000042L].volumeWeek, 1, 'COMMA') : 'No Data'}">No Data</td>
                     </tr>
 
                     <!-- Monthly Data Category -->
                     <tr class="category-row">
-                        <td colspan="4">Monthly Data</td>
+                        <td colspan="6">Monthly Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">Average Price (Month)</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                    </tr>
-                    <tr>
-                        <td class="field-name">Volume (Month)</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeMonth != null ? #numbers.formatInteger(regionData[10000002L].volumeMonth, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeMonth != null ? #numbers.formatInteger(regionData[10000043L].volumeMonth, 0, 'COMMA') : 'No Data'}">No Data</td>
-                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeMonth != null ? #numbers.formatInteger(regionData[10000032L].volumeMonth, 0, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000030L].averagePriceMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].averagePriceMonth != null ? #numbers.formatDecimal(regionData[10000042L].averagePriceMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">VWAP (Month)</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000002L].vwapMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000043L].vwapMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000032L].vwapMonth, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000002L].vwapMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000043L].vwapMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000032L].vwapMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000030L].vwapMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].vwapMonth != null ? #numbers.formatDecimal(regionData[10000042L].vwapMonth, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Volume (Month)</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeMonth != null ? #numbers.formatInteger(regionData[10000002L].volumeMonth, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeMonth != null ? #numbers.formatInteger(regionData[10000043L].volumeMonth, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeMonth != null ? #numbers.formatInteger(regionData[10000032L].volumeMonth, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].volumeMonth != null ? #numbers.formatInteger(regionData[10000030L].volumeMonth, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].volumeMonth != null ? #numbers.formatInteger(regionData[10000042L].volumeMonth, 1, 'COMMA') : 'No Data'}">No Data</td>
                     </tr>
 
-                    <!-- 52-Week Data Category -->
+                    <!-- Quarterly Data Category -->
                     <tr class="category-row">
-                        <td colspan="4">52-Week Extremes</td>
+                        <td colspan="6">Quarterly Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Average Price (Quarter)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceQuarter != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceQuarter != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceQuarter != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].averagePriceQuarter != null ? #numbers.formatDecimal(regionData[10000030L].averagePriceQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].averagePriceQuarter != null ? #numbers.formatDecimal(regionData[10000042L].averagePriceQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">VWAP (Quarter)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapQuarter != null ? #numbers.formatDecimal(regionData[10000002L].vwapQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapQuarter != null ? #numbers.formatDecimal(regionData[10000043L].vwapQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapQuarter != null ? #numbers.formatDecimal(regionData[10000032L].vwapQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].vwapQuarter != null ? #numbers.formatDecimal(regionData[10000030L].vwapQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].vwapQuarter != null ? #numbers.formatDecimal(regionData[10000042L].vwapQuarter, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Volume (Quarter)</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeQuarter != null ? #numbers.formatInteger(regionData[10000002L].volumeQuarter, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeQuarter != null ? #numbers.formatInteger(regionData[10000043L].volumeQuarter, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeQuarter != null ? #numbers.formatInteger(regionData[10000032L].volumeQuarter, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].volumeQuarter != null ? #numbers.formatInteger(regionData[10000030L].volumeQuarter, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].volumeQuarter != null ? #numbers.formatInteger(regionData[10000042L].volumeQuarter, 1, 'COMMA') : 'No Data'}">No Data</td>
+                    </tr>
+
+                    <!-- Yearly Data Category -->
+                    <tr class="category-row">
+                        <td colspan="6">Yearly Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Average Price (Year)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].averagePriceYear != null ? #numbers.formatDecimal(regionData[10000002L].averagePriceYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].averagePriceYear != null ? #numbers.formatDecimal(regionData[10000043L].averagePriceYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].averagePriceYear != null ? #numbers.formatDecimal(regionData[10000032L].averagePriceYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].averagePriceYear != null ? #numbers.formatDecimal(regionData[10000030L].averagePriceYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].averagePriceYear != null ? #numbers.formatDecimal(regionData[10000042L].averagePriceYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">VWAP (Year)</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].vwapYear != null ? #numbers.formatDecimal(regionData[10000002L].vwapYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].vwapYear != null ? #numbers.formatDecimal(regionData[10000043L].vwapYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].vwapYear != null ? #numbers.formatDecimal(regionData[10000032L].vwapYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].vwapYear != null ? #numbers.formatDecimal(regionData[10000030L].vwapYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].vwapYear != null ? #numbers.formatDecimal(regionData[10000042L].vwapYear, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                    </tr>
+                    <tr>
+                        <td class="field-name">Volume (Year)</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].volumeYear != null ? #numbers.formatInteger(regionData[10000002L].volumeYear, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].volumeYear != null ? #numbers.formatInteger(regionData[10000043L].volumeYear, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].volumeYear != null ? #numbers.formatInteger(regionData[10000032L].volumeYear, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].volumeYear != null ? #numbers.formatInteger(regionData[10000030L].volumeYear, 1, 'COMMA') : 'No Data'}">No Data</td>
+                        <td class="data-cell volume-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].volumeYear != null ? #numbers.formatInteger(regionData[10000042L].volumeYear, 1, 'COMMA') : 'No Data'}">No Data</td>
+                    </tr>
+
+                    <!-- 52-Week Extremes -->
+                    <tr class="category-row">
+                        <td colspan="6">52-Week Extremes</td>
                     </tr>
                     <tr>
                         <td class="field-name">52-Week High</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].week52High != null ? #numbers.formatDecimal(regionData[10000002L].week52High, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].week52High != null ? #numbers.formatDecimal(regionData[10000043L].week52High, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].week52High != null ? #numbers.formatDecimal(regionData[10000032L].week52High, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].week52High != null ? #numbers.formatDecimal(regionData[10000002L].week52High, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].week52High != null ? #numbers.formatDecimal(regionData[10000043L].week52High, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].week52High != null ? #numbers.formatDecimal(regionData[10000032L].week52High, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].week52High != null ? #numbers.formatDecimal(regionData[10000030L].week52High, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].week52High != null ? #numbers.formatDecimal(regionData[10000042L].week52High, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
                     </tr>
                     <tr>
                         <td class="field-name">52-Week Low</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].week52Low != null ? #numbers.formatDecimal(regionData[10000002L].week52Low, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].week52Low != null ? #numbers.formatDecimal(regionData[10000043L].week52Low, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
-                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].week52Low != null ? #numbers.formatDecimal(regionData[10000032L].week52Low, 0, 2) + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000002L] != null and regionData[10000002L].week52Low != null ? #numbers.formatDecimal(regionData[10000002L].week52Low, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000043L] != null and regionData[10000043L].week52Low != null ? #numbers.formatDecimal(regionData[10000043L].week52Low, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000032L] != null and regionData[10000032L].week52Low != null ? #numbers.formatDecimal(regionData[10000032L].week52Low, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000030L] != null and regionData[10000030L].week52Low != null ? #numbers.formatDecimal(regionData[10000030L].week52Low, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
+                        <td class="data-cell price-cell" th:text="${regionData[10000042L] != null and regionData[10000042L].week52Low != null ? #numbers.formatDecimal(regionData[10000042L].week52Low, 1, 'COMMA', 2, 'POINT') + ' ISK' : 'No Data'}">No Data</td>
                     </tr>
                 </tbody>
             </table>

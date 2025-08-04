@@ -242,9 +242,9 @@
                             </td>
                             <td class="data-cell" th:text="${item.typeId}">12345</td>
                             <td class="data-cell">
-                                <span th:if="${#vars.getVariable('statsCount_10000002') > 0 || #vars.getVariable('statsCount_10000043') > 0 || #vars.getVariable('statsCount_10000032') > 0}"
+                                <span th:if="${itemDataAvailability != null and itemDataAvailability.get(item.typeId) == true}"
                                       style="color: #00ff00;">✓ Available</span>
-                                <span th:unless="${#vars.getVariable('statsCount_10000002') > 0 || #vars.getVariable('statsCount_10000043') > 0 || #vars.getVariable('statsCount_10000032') > 0}"
+                                <span th:unless="${itemDataAvailability != null and itemDataAvailability.get(item.typeId) == true}"
                                       style="color: #ff6b6b;">✗ No Data</span>
                             </td>
                         </tr>
