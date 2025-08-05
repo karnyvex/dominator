@@ -386,7 +386,7 @@ public class MokaamService {
     }
 
     public List<Integer> getSampleTypeIds(Long regionId, int limit) {
-        return statisticsRepository.findDistinctTypeIdsByRegion(regionId, limit);
+        return statisticsRepository.findDistinctTypeIdsByRegionId(regionId, limit);
     }
 
     public long getStatisticsCountForTypeId(Integer typeId) {

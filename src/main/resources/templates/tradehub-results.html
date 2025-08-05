@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tradehub Results - EVE Market Dominator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00d4ff;
+            border: 2px solid #00d4ff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .results-header {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .results-table th,
+        .results-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .results-table th {
+            background: rgba(0, 212, 255, 0.2);
+            font-weight: 600;
+            color: #00d4ff;
+        }
+        .results-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .item-name {
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .item-name:hover {
+            text-decoration: underline;
+        }
+        .price {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+        .price-difference {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        .price-difference.high {
+            color: #4CAF50;
+        }
+        .price-difference.very-high {
+            color: #8BC34A;
+        }
+        .price-difference.extreme {
+            color: #CDDC39;
+        }
+        .region-name {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .no-results {
+            text-align: center;
+            padding: 60px;
+            color: #ccc;
+            font-size: 1.2em;
+        }
+        .results-count {
+            margin-bottom: 20px;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        /* Sortable table styles */
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background-color 0.2s ease;
+        }
+        .sortable:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+        .sortable::after {
+            content: '↕';
+            position: absolute;
+            right: 8px;
+            opacity: 0.5;
+            font-size: 12px;
+        }
+        .sortable.asc::after {
+            content: '↑';
+            opacity: 1;
+            color: #00d4ff;
+        }
+        .sortable.desc::after {
+            content: '↓';
+            opacity: 1;
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/tradehub" class="back-button">← Back to Scanner</a>
+
+        <h1>🔄 Tradehub Price Differences</h1>
+
+        <div class="results-header">
+            <h3>Scan Results - <span th:text="${#strings.capitalize(timePeriod)}">Period</span> VWAP</h3>
+            <p>Scanned at: <span th:text="${#temporals.format(scanTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 12:00:00</span></p>
+            <p>Minimum difference threshold: <strong th:text="${minPriceDifference}">25</strong>%</p>
+            <p>Minimum market size filter: <strong th:text="${minMarketSize}">500</strong> million ISK (at least one region)</p>
+        </div>
+
+        <div th:if="${results != null and !results.isEmpty()}">
+            <div class="results-count">
+                Found <strong th:text="${#lists.size(results)}">0</strong> items with significant price differences
+            </div>
+
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" th:onclick="'sortTable(0, this)'">Item</th>
+                        <th class="sortable" th:onclick="'sortTable(1, this)'">Low Price Region</th>
+                        <th class="sortable" th:onclick="'sortTable(2, this)'">High Price Region</th>
+                        <th class="sortable" th:onclick="'sortTable(3, this)'">Price Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="result : ${results}">
+                        <td>
+                            <a th:href="@{/market-data/item/{typeId}(typeId=${result.typeId})}"
+                               class="item-name" th:text="${result.itemName}">Item Name</a>
+                        </td>
+                        <td>
+                            <div th:text="${result.lowRegionName}">Low Region</div>
+                            <div class="price" th:text="${result.formattedLowPrice + ' ISK'}">Low Price</div>
+                        </td>
+                        <td>
+                            <div th:text="${result.highRegionName}">High Region</div>
+                            <div class="price" th:text="${result.formattedHighPrice + ' ISK'}">High Price</div>
+                        </td>
+                        <td>
+                            <div class="price-difference"
+                                 th:classappend="${result.priceDifferencePercentage >= 100} ? 'extreme' : (${result.priceDifferencePercentage >= 75} ? 'very-high' : (${result.priceDifferencePercentage >= 50} ? 'high' : ''))"
+                                 th:text="${result.formattedPriceDifference}">Price Diff</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${results == null or results.isEmpty()}" class="no-results">
+            <div>📊</div>
+            <h3>No Price Differences Found</h3>
+            <p>No items found with price differences above <span th:text="${minPriceDifference}">25</span>% between trade hubs.</p>
+            <p>Try adjusting the minimum difference threshold in the configuration or check if market data is available for all regions.</p>
+        </div>
+    </div>
+
+    <script>
+        function sortTable(columnIndex, header) {
+            const table = header.closest('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            const isAscending = header.classList.toggle('asc');
+            header.classList.remove('desc');
+
+            rows.sort((a, b) => {
+                const aText = a.children[columnIndex].textContent.trim();
+                const bText = b.children[columnIndex].textContent.trim();
+
+                const aValue = isNaN(aText) ? aText : parseFloat(aText.replace(/,/g, ''));
+                const bValue = isNaN(bText) ? bText : parseFloat(bText.replace(/,/g, ''));
+
+                return isAscending ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+    </script>
+</body>
+</html>

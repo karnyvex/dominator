@@ -4,9 +4,11 @@ import com.eve.dominator.config.EveConfig;
 import com.eve.dominator.model.ItemName;
 import com.eve.dominator.model.MarketAnalysisResult;
 import com.eve.dominator.model.MarketStatistics;
+import com.eve.dominator.model.TradehubComparisonResult;
 import com.eve.dominator.service.ItemNameService;
 import com.eve.dominator.service.MarketAnalysisService;
 import com.eve.dominator.service.MokaamService;
+import com.eve.dominator.service.TradehubAnalysisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +35,15 @@ public class MarketController {
     private final MokaamService mokaamService;
     private final EveConfig eveConfig;
     private final ItemNameService itemNameService;
+    private final TradehubAnalysisService tradehubAnalysisService;
 
     @Autowired
-    public MarketController(MarketAnalysisService marketAnalysisService, MokaamService mokaamService, EveConfig eveConfig, ItemNameService itemNameService) {
+    public MarketController(MarketAnalysisService marketAnalysisService, MokaamService mokaamService, EveConfig eveConfig, ItemNameService itemNameService, TradehubAnalysisService tradehubAnalysisService) {
         this.marketAnalysisService = marketAnalysisService;
         this.mokaamService = mokaamService;
         this.eveConfig = eveConfig;
         this.itemNameService = itemNameService;
+        this.tradehubAnalysisService = tradehubAnalysisService;
         logger.info("MarketController initialized with config: {}", eveConfig);
     }
 
@@ -315,6 +319,42 @@ public class MarketController {
 
         model.addAttribute("debugInfo", debugInfo);
         return "debug-market-data";
+    }
+
+    @GetMapping("/tradehub")
+    public String tradehubPage(Model model) {
+        logger.info("Tradehub scanner page requested");
+
+        model.addAttribute("minPriceDifference", eveConfig.getTradehub().getMinPriceDifferencePercentage());
+        model.addAttribute("minMarketSize", eveConfig.getTradehub().getMinMarketSizeMillions());
+        model.addAttribute("importRegions", eveConfig.getImportRegions());
+
+        return "tradehub";
+    }
+
+    @PostMapping("/tradehub/scan")
+    public String scanTradehub(@RequestParam String timePeriod, Model model) {
+        logger.info("Tradehub scan requested for period: {}", timePeriod);
+
+        try {
+            List<TradehubComparisonResult> results = tradehubAnalysisService.scanTradehubDifferences(timePeriod);
+            logger.info("Tradehub scan completed. Found {} price differences", results.size());
+
+            model.addAttribute("results", results);
+            model.addAttribute("timePeriod", timePeriod);
+            model.addAttribute("minPriceDifference", eveConfig.getTradehub().getMinPriceDifferencePercentage());
+            model.addAttribute("minMarketSize", eveConfig.getTradehub().getMinMarketSizeMillions());
+            model.addAttribute("scanTime", java.time.LocalDateTime.now());
+
+            return "tradehub-results";
+        } catch (Exception e) {
+            logger.error("Failed to scan tradehub differences for period {}: ", timePeriod, e);
+            model.addAttribute("error", "Failed to scan tradehub differences: " + e.getMessage());
+            model.addAttribute("minPriceDifference", eveConfig.getTradehub().getMinPriceDifferencePercentage());
+            model.addAttribute("minMarketSize", eveConfig.getTradehub().getMinMarketSizeMillions());
+            model.addAttribute("importRegions", eveConfig.getImportRegions());
+            return "tradehub";
+        }
     }
 
     private String getRegionName(Long regionId) {

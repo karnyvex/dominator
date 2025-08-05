@@ -39,8 +39,34 @@ public interface MarketStatisticsRepository extends JpaRepository<MarketStatisti
     long countByTypeId(@Param("typeId") Integer typeId);
 
     @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId ORDER BY ms.typeId LIMIT :limit")
-    List<Integer> findDistinctTypeIdsByRegion(@Param("regionId") Long regionId, @Param("limit") int limit);
+    List<Integer> findDistinctTypeIdsByRegionId(@Param("regionId") Long regionId, @Param("limit") int limit);
+
+    @Query("SELECT ms FROM MarketStatistics ms WHERE ms.regionId = :regionId")
+    List<MarketStatistics> findByRegionId(@Param("regionId") Long regionId);
 
     @Query("SELECT MAX(ms.date) FROM MarketStatistics ms WHERE ms.regionId = :regionId")
     Optional<LocalDate> findLatestDateByRegionId(@Param("regionId") Long regionId);
+
+    @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId AND " +
+           "((ms.vwapWeek IS NOT NULL AND ms.vwapWeek > 0 AND ms.volumeWeek IS NOT NULL AND ms.volumeWeek > 0) OR " +
+           "(ms.vwapMonth IS NOT NULL AND ms.vwapMonth > 0 AND ms.volumeMonth IS NOT NULL AND ms.volumeMonth > 0) OR " +
+           "(ms.vwapQuarter IS NOT NULL AND ms.vwapQuarter > 0 AND ms.volumeQuarter IS NOT NULL AND ms.volumeQuarter > 0) OR " +
+           "(ms.vwapYear IS NOT NULL AND ms.vwapYear > 0 AND ms.volumeYear IS NOT NULL AND ms.volumeYear > 0))")
+    List<Integer> findTypeIdsWithVwapData(@Param("regionId") Long regionId);
+
+    @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId AND " +
+           "ms.vwapWeek IS NOT NULL AND ms.vwapWeek > 0 AND ms.volumeWeek IS NOT NULL AND ms.volumeWeek > 0")
+    List<Integer> findTypeIdsWithWeeklyVwapData(@Param("regionId") Long regionId);
+
+    @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId AND " +
+           "ms.vwapMonth IS NOT NULL AND ms.vwapMonth > 0 AND ms.volumeMonth IS NOT NULL AND ms.volumeMonth > 0")
+    List<Integer> findTypeIdsWithMonthlyVwapData(@Param("regionId") Long regionId);
+
+    @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId AND " +
+           "ms.vwapQuarter IS NOT NULL AND ms.vwapQuarter > 0 AND ms.volumeQuarter IS NOT NULL AND ms.volumeQuarter > 0")
+    List<Integer> findTypeIdsWithQuarterlyVwapData(@Param("regionId") Long regionId);
+
+    @Query("SELECT DISTINCT ms.typeId FROM MarketStatistics ms WHERE ms.regionId = :regionId AND " +
+           "ms.vwapYear IS NOT NULL AND ms.vwapYear > 0 AND ms.volumeYear IS NOT NULL AND ms.volumeYear > 0")
+    List<Integer> findTypeIdsWithYearlyVwapData(@Param("regionId") Long regionId);
 }

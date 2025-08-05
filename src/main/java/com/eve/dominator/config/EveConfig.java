@@ -17,6 +17,7 @@ public class EveConfig {
     private List<Long> importRegions;
     private Map<Long, Long> stations;
     private Monopoly monopoly = new Monopoly();
+    private Tradehub tradehub = new Tradehub();
     private MarketData marketData = new MarketData();
     private Esi esi = new Esi();
     private Mokaam mokaam = new Mokaam();
@@ -33,6 +34,9 @@ public class EveConfig {
 
     public Monopoly getMonopoly() { return monopoly; }
     public void setMonopoly(Monopoly monopoly) { this.monopoly = monopoly; }
+
+    public Tradehub getTradehub() { return tradehub; }
+    public void setTradehub(Tradehub tradehub) { this.tradehub = tradehub; }
 
     public MarketData getMarketData() { return marketData; }
     public void setMarketData(MarketData marketData) { this.marketData = marketData; }
@@ -166,6 +170,21 @@ public class EveConfig {
         public long getMinMarketSizeYear(long regionId) {
             return minMarketSizeYearByRegion.getOrDefault(String.valueOf(regionId), minMarketSizeYear);
         }
+    }
+
+    public static class Tradehub {
+        private double minPriceDifferencePercentage;
+        private double minMarketSizeMillions;
+        private int maxThreads;
+
+        public double getMinPriceDifferencePercentage() { return minPriceDifferencePercentage; }
+        public void setMinPriceDifferencePercentage(double minPriceDifferencePercentage) { this.minPriceDifferencePercentage = minPriceDifferencePercentage; }
+
+        public double getMinMarketSizeMillions() { return minMarketSizeMillions; }
+        public void setMinMarketSizeMillions(double minMarketSizeMillions) { this.minMarketSizeMillions = minMarketSizeMillions; }
+
+        public int getMaxThreads() { return maxThreads; }
+        public void setMaxThreads(int maxThreads) { this.maxThreads = maxThreads; }
     }
 
     public static class MarketData {
