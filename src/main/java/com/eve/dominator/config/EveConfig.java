@@ -175,6 +175,7 @@ public class EveConfig {
     public static class Tradehub {
         private double minPriceDifferencePercentage;
         private double minMarketSizeMillions;
+        private double minMarketSizeAlternativeMillions;
         private int maxThreads;
 
         public double getMinPriceDifferencePercentage() { return minPriceDifferencePercentage; }
@@ -182,6 +183,9 @@ public class EveConfig {
 
         public double getMinMarketSizeMillions() { return minMarketSizeMillions; }
         public void setMinMarketSizeMillions(double minMarketSizeMillions) { this.minMarketSizeMillions = minMarketSizeMillions; }
+
+        public double getMinMarketSizeAlternativeMillions() { return minMarketSizeAlternativeMillions; }
+        public void setMinMarketSizeAlternativeMillions(double minMarketSizeAlternativeMillions) { this.minMarketSizeAlternativeMillions = minMarketSizeAlternativeMillions; }
 
         public int getMaxThreads() { return maxThreads; }
         public void setMaxThreads(int maxThreads) { this.maxThreads = maxThreads; }

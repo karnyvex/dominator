@@ -242,13 +242,20 @@ public class TradehubAnalysisService {
             }
 
             // Apply market size filter using already fetched data (no additional DB calls!)
-            double minMarketSizeThreshold = eveConfig.getTradehub().getMinMarketSizeMillions() * 1_000_000;
+            double primaryMarketSizeThreshold = eveConfig.getTradehub().getMinMarketSizeMillions() * 1_000_000;
+            double alternativeMarketSizeThreshold = eveConfig.getTradehub().getMinMarketSizeAlternativeMillions() * 1_000_000;
             double minRegionMarketSize = regionDataMap.get(minRegion).getMarketSize();
             double maxRegionMarketSize = regionDataMap.get(maxRegion).getMarketSize();
 
-            if (minRegionMarketSize < minMarketSizeThreshold && maxRegionMarketSize < minMarketSizeThreshold) {
-                logger.debug("Item {} filtered out: minRegion {} market size {:.0f} ISK, maxRegion {} market size {:.0f} ISK, threshold {:.0f} ISK",
-                            typeId, minRegion, minRegionMarketSize, maxRegion, maxRegionMarketSize, minMarketSizeThreshold);
+            // Check if at least one region meets the primary threshold and the other meets the alternative threshold
+            boolean primaryThresholdMet = (minRegionMarketSize >= primaryMarketSizeThreshold || maxRegionMarketSize >= primaryMarketSizeThreshold);
+            boolean alternativeThresholdMet = (minRegionMarketSize >= alternativeMarketSizeThreshold && maxRegionMarketSize >= alternativeMarketSizeThreshold);
+
+            if (!primaryThresholdMet || !alternativeThresholdMet) {
+                logger.debug("Item {} filtered out: minRegion {} market size {:.0f} ISK, maxRegion {} market size {:.0f} ISK, " +
+                           "primary threshold {:.0f} ISK, alternative threshold {:.0f} ISK",
+                           typeId, minRegion, minRegionMarketSize, maxRegion, maxRegionMarketSize,
+                           primaryMarketSizeThreshold, alternativeMarketSizeThreshold);
                 return null;
             }
 
